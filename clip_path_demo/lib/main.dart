@@ -1,4 +1,5 @@
 import 'package:clip_path_demo/path.dart';
+import 'package:clip_path_demo/spin_loader.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyPath(),
+      home: const SpinLoader(),
     );
   }
 }
