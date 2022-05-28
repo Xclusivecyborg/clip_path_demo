@@ -19,12 +19,10 @@ class _SpinLoaderState extends State<SpinLoader> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: math.pi * 2).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _animation = Tween<double>(begin: 0.0, end: math.pi * 2).animate(
+      _controller,
+    )..addListener(() => setState(() {}));
+
     _controller.repeat();
   }
 
@@ -38,7 +36,7 @@ class _SpinLoaderState extends State<SpinLoader> with TickerProviderStateMixin {
             painter: _SpinLoaderPainter(
               radians: _animation.value,
             ),
-            size: Size.fromHeight(40),
+            size: const Size(50, 50),
           ),
         ),
       ),
@@ -47,13 +45,24 @@ class _SpinLoaderState extends State<SpinLoader> with TickerProviderStateMixin {
 }
 
 class _SpinLoaderPainter extends CustomPainter {
-  _SpinLoaderPainter({required  this.radians});
+  _SpinLoaderPainter({required this.radians});
   final double radians;
   @override
   void paint(Canvas canvas, Size size) {
     final firstCirclePaint = Paint()
-      ..color = Colors.red
-      ..style = PaintingStyle.fill;
+      ..color = Colors.green
+      ..style = PaintingStyle.fill
+      ..shader = const LinearGradient(
+        colors: [
+          Colors.green,
+          Colors.blueAccent,
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromCircle(
+        center: Offset.zero,
+        radius: size.width / 2,
+      ));
     final width = size.width;
     final height = size.height;
     final center = Offset(width / 2, height / 2);
@@ -61,17 +70,20 @@ class _SpinLoaderPainter extends CustomPainter {
     canvas.translate(center.dx, center.dy);
     const firstCircleOffset = Offset.zero;
 
-    // canvas.drawCircle(firstCircleOffset, 50, firstCirclePaint);
-
     canvas.rotate(math.pi / 2);
-    canvas.drawCircle(firstCircleOffset, 50, firstCirclePaint);
+    canvas.drawCircle(firstCircleOffset, height, firstCirclePaint);
 
     final arcRect = Rect.fromCircle(
       center: Offset.zero,
-      radius: 50,
+      radius: height * 1.2,
     );
+
     final arcPaint = Paint()
-      ..color = Colors.green
+      ..color = radians < math.pi && radians < math.pi / 2
+          ? Colors.blueAccent
+          : radians < math.pi && radians > math.pi / 2
+              ? Colors.purpleAccent
+              : Colors.red
       ..style = PaintingStyle.stroke
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
@@ -79,7 +91,6 @@ class _SpinLoaderPainter extends CustomPainter {
     const double sweepAngle = math.pi / 2;
 
     canvas.drawArc(arcRect, startAngle, sweepAngle, false, arcPaint);
-    canvas.rotate(radians);
   }
 
   @override
