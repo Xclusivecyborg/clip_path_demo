@@ -1,3 +1,4 @@
+import 'package:clip_path_demo/flash_loader.dart';
 import 'package:clip_path_demo/path.dart';
 import 'package:clip_path_demo/spin_loader.dart';
 import 'package:flutter/material.dart';
